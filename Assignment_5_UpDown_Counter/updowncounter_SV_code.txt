@@ -1,0 +1,35 @@
+module updown_counter ( input wire clk,
+input wire rst,
+input wire up_down, output reg [3:0] count);
+always @(posedge clk or posedge rst) begin if (rst)
+count <= 4'b0000; else if (up_down) count <= count + 1; else
+count <= count - 1; end
+endmodule
+
+
+TESTBENCH
+`timescale 1ns / 1ps
+module tb_updown_counter; reg clk;
+reg rst;
+reg up_down; wire [3:0] count;
+updown_counter uut (
+.clk(clk),
+.rst(rst),
+.up_down(up_down),
+.count(count) );
+ 
+initial begin clk = 0;
+forever #5 clk = ~clk; end
+initial begin
+$display("Time | rst up_down | count");
+$monitor("%4t | %b	%b	| %b", $time, rst, up_down, count); rst = 1; up_down = 1; #10;
+rst = 0;
+up_down = 1;
+#50;
+up_down = 0;
+#50;
+rst = 1; #10;
+rst = 0;
+up_down = 1;
+#30;
+$finish; end endmodule
